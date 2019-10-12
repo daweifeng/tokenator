@@ -20,6 +20,7 @@ Your token will be displayed in console
 
 - To verify your key
 ```bash
-python3 main.py verify --account accountName --token 123456abcd12345
+python3 main.py verify --account accountName --token 123456abcd12345 
 ```
+It will display `True` or `False`
 
