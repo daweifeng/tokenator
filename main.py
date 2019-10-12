@@ -38,7 +38,7 @@ def write_key_to_file(key):
 		file.write(key)
 	
 def encrypt(key,account):
-	h = blake2b(key=key, digest_size=16)
+	h = blake2b(key=key, digest_size=8)
 	h.update(account.encode())
 	return h.hexdigest().encode('utf-8')
 
