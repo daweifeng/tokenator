@@ -2,12 +2,14 @@ import click
 from hashlib import blake2b
 from hmac import compare_digest
 from cryptography.fernet import Fernet
+import pyperclip
 
 @click.command()
 @click.argument('action')
 @click.option('--account')
 @click.option('--token')
-def main(action, account, token):
+@click.option('--show', is_flag=True)
+def main(action, account, token, show=False):
 	if action == 'generate':
 		key = generate_key()
 		write_key_to_file(key.decode('utf-8'))
@@ -16,12 +18,16 @@ def main(action, account, token):
 	if action == 'encrypt':
 		key = get_key_from_file().encode()
 		
-		password = encrypt(key, account)
-		click.echo(password)
+		token: str = encrypt(key, account)
+		if show:
+			click.echo('Your generated token is: {}'.format(token))
+		else:
+			copy_to_clipboard(token)
+			click.echo("The generated token is saved to your clipboard")
+
 
 	if action == 'verify':
 		key = get_key_from_file().encode()
-		
 		original = verify(key, account, token.encode())
 		click.echo(original)
 
@@ -40,11 +46,14 @@ def write_key_to_file(key):
 def encrypt(key,account):
 	h = blake2b(key=key, digest_size=8)
 	h.update(account.encode())
-	return h.hexdigest().encode('utf-8')
+	return h.hexdigest()
 
 def verify(key,account, token):
 	good_token = encrypt(key, account)
 	return compare_digest(token, good_token)
+
+def copy_to_clipboard(token):
+	pyperclip.copy(token);
 
 if __name__ == '__main__':
 	main()
