@@ -28,7 +28,7 @@ def main(action, account, token, show=False):
 
 	if action == 'verify':
 		key = get_key_from_file().encode()
-		original = verify(key, account, token.encode())
+		original = verify(key, account, token)
 		click.echo(original)
 
 def generate_key():
